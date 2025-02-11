@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "watch:lib": "ng build @ngxpert/input-otp --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "prepare": "husky",
@@ -21,7 +22,10 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@tailwindcss/postcss": "^4.0.5",
+    "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.0.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },

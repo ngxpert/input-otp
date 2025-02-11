@@ -1,0 +1,36 @@
+<div
+  #containerRef
+  [class]="containerClassName || ''"
+  data-input-otp-container
+  [style]="rootStyle"
+>
+  <ng-content></ng-content>
+  <div
+    [style]="{
+      position: 'absolute',
+      inset: 0,
+      pointerEvents: 'none',
+    }"
+  >
+    <input
+      #inputRef
+      data-input-otp
+      [attr.data-input-otp-placeholder-shown]="formControl.value?.length === 0 || undefined"
+      [attr.data-input-otp-mss]="mirrorSelectionStart || undefined"
+      [attr.data-input-otp-mse]="mirrorSelectionEnd || undefined"
+      [attr.inputMode]="inputMode"
+      [attr.pattern]="pattern"
+      [attr.aria-placeholder]="placeholder"
+      [style]="inputStyle"
+      [maxLength]="maxLength()"
+      [formControl]="formControl"
+      (paste)="onPaste($event)"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      [autocomplete]="autoComplete || 'one-time-code'"
+      (selectionchange)="onSelectionChange($event)"
+    />
+  </div>
+</div>

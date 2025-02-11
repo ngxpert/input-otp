@@ -1,9 +1,29 @@
 {
   "name": "@ngxpert/input-otp",
   "version": "0.0.1",
+  "description": "One-time password input component for Angular.",
+  "keywords": [
+    "angular",
+    "otp",
+    "input",
+    "accessible"
+  ],
+  "author": {
+    "name": "ngxpert",
+    "url": "https://github.com/ngxpert"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ngxpert/input-otp"
+  },
+  "bugs": {
+    "url": "https://github.com/ngxpert/input-otp/issues"
+  },
+  "license": "MIT",
   "peerDependencies": {
-    "@angular/common": ">=19.0.0",
-    "@angular/core": ">=19.0.0"
+    "@angular/common": "19.0.0",
+    "@angular/core": "19.0.0",
+    "@angular/forms": "19.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

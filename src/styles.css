@@ -1,1 +1,153 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 72.22% 50.59%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5% 64.9%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 85.7% 97.3%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --animate-caret-blink: caret-blink 1.2s ease-out infinite;
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
+  --animate-fade-up: fade-up 1s ease-out forwards;
+
+  --font-sans: InterVariable, sans-serif;
+  --font-mono: "JetBrains Mono", serif;
+
+  --radius-md: 0.5rem;
+
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(var(--fade-distance, 0.25rem));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  body {
+    /* @apply bg-background text-foreground selection:bg-[#6B2BF4] selection:text-foreground; */
+    @apply bg-background text-foreground;
+    /* font-feature-settings: "rlig" 1, "calt" 1; */
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+[data-highlighted-chars] {
+  @apply bg-zinc-900 rounded;
+  box-shadow: 2px 2px 0 2px rgba(139, 139, 148, 0.5);
+}
+[data-highlighted-chars] .dark {
+  @apply bg-zinc-700/50 rounded;
+  box-shadow: 2px 2px 0 2px rgba(139, 139, 148, 0.5);
+}
+[data-highlighted-chars] * {
+  @apply !text-white;
+}
+[data-rehype-pretty-code-figure] pre {
+  @apply pb-4 pt-6 max-h-[650px] overflow-x-auto rounded-lg border !bg-transparent;
+}
+[data-rehype-pretty-code-figure] [data-line] {
+  @apply inline-block min-h-4 w-full py-0.5 px-4;
+}
+
+html[class="light"] .code-example-light {
+  display: unset;
+}
+html[class="light"] .code-example-dark {
+  display: none;
+}
+html[class="dark"] .code-example-dark {
+  display: unset;
+}
+html[class="dark"] .code-example-light {
+  display: none;
+}
