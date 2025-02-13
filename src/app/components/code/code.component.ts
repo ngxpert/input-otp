@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 // @ts-expect-error TypeScript cannot provide types based on attributes yet
-import mainComponentContent from '../../pages/examples/main.component' with { loader: 'text' };
+import mainComponentContent from '../../pages/examples/main/main.component' with { loader: 'text' };
 // @ts-expect-error TypeScript cannot provide types based on attributes yet
-import slotComponentContent from '../../pages/examples/slot.component' with { loader: 'text' };
+import slotComponentContent from '../../pages/examples/main/slot.component' with { loader: 'text' };
 // @ts-expect-error TypeScript cannot provide types based on attributes yet
-import fakeComponentsContent from '../../pages/examples/fake-components' with { loader: 'text' };
+import fakeComponentsContent from '../../pages/examples/main/fake-components' with { loader: 'text' };
 // @ts-expect-error TypeScript cannot provide types based on attributes yet
-import utilsContent from '../../pages/examples/utils' with { loader: 'text' };
+import utilsContent from '../../pages/examples/main/utils' with { loader: 'text' };
 import { MatTabsModule } from '@angular/material/tabs';
 import { AsyncPipe } from '@angular/common';
 import { CodeHighlightPipe } from '../../shared/pipes/code-highlight.pipe';

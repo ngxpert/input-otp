@@ -1,6 +1,6 @@
 {
   "name": "@ngxpert/input-otp",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "description": "One-time password input component for Angular.",
   "keywords": [
     "angular",
@@ -20,13 +20,25 @@
     "url": "https://github.com/ngxpert/input-otp/issues"
   },
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.schematics.json",
+    "postpublish": "cpx package.json ../../../../../projects/ngxpert/input-otp/ && cpx npm-shrinkwrap.json ../../../../../projects/ngxpert/input-otp/",
+    "postbuild": "copyfiles schematics/*/schema.json schematics/*/files/** schematics/collection.json ../../../dist/ngxpert/input-otp/"
+  },
   "peerDependencies": {
-    "@angular/common": "19.0.0",
-    "@angular/core": "19.0.0",
-    "@angular/forms": "19.0.0"
+    "@angular/common": ">=19.0.0",
+    "@angular/core": ">=19.0.0",
+    "@angular/forms": ">=19.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

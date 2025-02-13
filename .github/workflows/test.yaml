@@ -1,0 +1,53 @@
+name: Test, Build and Publish a beta version
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          # The Cypress binary is saved within the `~/.cache` folder.
+          path: |
+            node_modules
+            ~/.cache
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm
+
+      - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        env:
+          HUSKY_SKIP_INSTALL: true
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint -- @ngxpert/input-otp
+
+      - name: Build library
+        run: npm run build:lib
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release --debug
