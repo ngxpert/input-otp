@@ -11,7 +11,7 @@ module.exports = tseslint.config(
         "error",
         {
           type: "attribute",
-          prefix: "lib",
+          prefix: "",
           style: "camelCase",
         },
       ],
@@ -19,7 +19,7 @@ module.exports = tseslint.config(
         "error",
         {
           type: "element",
-          prefix: "lib",
+          prefix: "",
           style: "kebab-case",
         },
       ],
@@ -28,5 +28,5 @@ module.exports = tseslint.config(
   {
     files: ["**/*.html"],
     rules: {},
-  }
+  },
 );

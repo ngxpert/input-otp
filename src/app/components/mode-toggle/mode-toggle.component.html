@@ -1,0 +1,18 @@
+<button
+  appUiButton
+  variant="ghost"
+  (click)="changeTheme(isDark() ? 'light' : 'dark')"
+  class="w-9 cursor-pointer px-0"
+>
+  <span
+    class="material-symbols-outlined absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 [font-size:1.25rem]!"
+  >
+    dark_mode
+  </span>
+  <span
+    class="material-symbols-outlined rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 [font-size:1.25rem]!"
+  >
+    light_mode
+  </span>
+  <span class="sr-only">Toggle theme</span>
+</button>

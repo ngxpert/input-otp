@@ -1,36 +1,5 @@
-<div className="relative flex min-h-[100dvh] flex-col bg-background">
-  <main class="flex-1 flex flex-col">
-    <lib-input-otp
-      #otp="libInputOtp"
-      [maxLength]="6"
-      [pattern]="REGEXP_ONLY_DIGITS"
-      [(ngModel)]="otpValue"
-      (complete)="onComplete($event)"
-      containerClassName="group flex items-center has-[:disabled]:opacity-30"
-      aria-label="showcase-otp-input"
-    >
-      <div class="flex gap-2">
-        @for (slot of otp.slots().slice(0, 3); track $index) {
-          <app-slot
-            [isActive]="slot.isActive"
-            [char]="slot.char"
-            [placeholderChar]="slot.placeholderChar"
-            [hasFakeCaret]="slot.hasFakeCaret"
-            [animateIdx]="$index"
-          />
-        }
-
-        <app-fake-dash />
-
-        @for (slot of otp.slots().slice(3, 6); track $index + 3) {
-          <app-slot
-            [isActive]="slot.isActive"
-            [char]="slot.char"
-            [placeholderChar]="slot.placeholderChar"
-            [hasFakeCaret]="slot.hasFakeCaret"
-          />
-        }
-      </div>
-    </lib-input-otp>
-  </main>
+<div
+  class="relative flex min-h-[100dvh] flex-col bg-background max-w-7xl mx-auto"
+>
+  <router-outlet />
 </div>

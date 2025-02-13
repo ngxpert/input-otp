@@ -1,0 +1,77 @@
+<app-site-header />
+<main class="flex-1 flex flex-col">
+  <div
+    class="relative flex-1 block md:flex flex-col justify-center items-center"
+  >
+    <app-page-header>
+      <app-page-header-heading [class]="fadeUpClassname">
+        {{ heading }}
+      </app-page-header-heading>
+
+      <app-showcase
+        [class]="cn(fadeUpClassname, 'lg:motion-safe:[animation-delay:1000ms]')"
+      ></app-showcase>
+
+      <app-page-header-description
+        [class]="cn(fadeUpClassname, 'lg:motion-safe:[animation-delay:3000ms]')"
+      >
+        One-time password input component for Angular. Accessible. Unstyled.
+        Customizable. Open Source.
+      </app-page-header-description>
+
+      <app-page-actions
+        [class]="cn(fadeUpClassname, 'lg:motion-safe:[animation-delay:3000ms]')"
+      >
+        <div
+          [class]="buttonVariants({ variant: 'outline' })"
+          cdkCopyToClipboard="ng add @ngxpert/input-otp"
+          (cdkCopyToClipboardCopied)="copied()"
+          role="button"
+        >
+          <div class="text-muted-foreground pr-1">
+            <span class="text-foreground">ng add</span> &#64;ngxpert/input-otp
+          </div>
+          <button appUiButton size="icon" variant="ghost">
+            @if (isCopied) {
+              <span class="text-muted-foreground material-symbols-outlined">
+                check
+              </span>
+            } @else {
+              <span class="text-muted-foreground material-symbols-outlined">
+                content_copy
+              </span>
+            }
+            <span class="sr-only">Copy</span>
+          </button>
+        </div>
+
+        <a
+          target="_blank"
+          rel="noreferrer"
+          [href]="siteConfig.links.github"
+          [class]="
+            cn('relative !py-0 group', buttonVariants({ variant: 'outline' }))
+          "
+        >
+          <app-icon-github class="mr-2 h-4 w-4" />
+          <div class="flex items-center h-full">
+            <div class="hidden md:[display:unset]">GitHub</div>
+            <div
+              class="hidden md:[display:unset] h-full w-px bg-input group-hover:bg-foregrounds mx-4"
+            ></div>
+            <div>{{ starCount$ | async }}</div>
+          </div>
+        </a>
+      </app-page-actions>
+    </app-page-header>
+
+    <div
+      [class]="cn(fadeUpClassname, 'lg:motion-safe:[animation-delay:3000ms]')"
+    >
+      <app-code></app-code>
+    </div>
+  </div>
+</main>
+<div [class]="cn(fadeUpClassname, 'lg:motion-safe:[animation-delay:3000ms]')">
+  <app-site-footer></app-site-footer>
+</div>

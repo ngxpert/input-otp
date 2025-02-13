@@ -15,7 +15,7 @@ export interface OTPInputProps {
   disabled?: boolean;
   autoComplete?: string;
   pushPasswordManagerStrategy?: 'increase-width' | 'none';
-  containerClassName?: string;
+  containerClass?: string;
   noScriptCSSFallback?: string | null;
 }
 

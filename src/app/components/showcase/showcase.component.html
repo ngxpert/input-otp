@@ -1,0 +1,40 @@
+<form
+  [class]="cn('mx-auto flex max-w-[980px] justify-center pt-6 pb-4', className)"
+  (ngSubmit)="onSubmit()"
+>
+  <input-otp
+    #otp="inputOtp"
+    [maxLength]="6"
+    [pattern]="REGEXP_ONLY_DIGITS"
+    [(ngModel)]="otpValue"
+    (complete)="onComplete($event)"
+    containerClass="group flex items-center has-[:disabled]:opacity-30"
+    aria-label="showcase-otp-input"
+    autoComplete="name"
+    name="otp"
+    [disabled]="disabled()"
+  >
+    <div class="flex gap-2">
+      @for (slot of otp.slots().slice(0, 3); track $index) {
+        <app-slot
+          [isActive]="slot.isActive"
+          [char]="slot.char"
+          [placeholderChar]="slot.placeholderChar"
+          [hasFakeCaret]="slot.hasFakeCaret"
+          [animateIdx]="$index"
+        />
+      }
+
+      <app-fake-dash />
+
+      @for (slot of otp.slots().slice(3, 6); track $index + 3) {
+        <app-slot
+          [isActive]="slot.isActive"
+          [char]="slot.char"
+          [placeholderChar]="slot.placeholderChar"
+          [hasFakeCaret]="slot.hasFakeCaret"
+        />
+      }
+    </div>
+  </input-otp>
+</form>

@@ -1,6 +1,6 @@
 <div
   #containerRef
-  [class]="containerClassName || ''"
+  [class]="containerClass || ''"
   data-input-otp-container
   [style]="rootStyle"
 >
@@ -24,7 +24,6 @@
       [style]="inputStyle"
       [maxLength]="maxLength()"
       [formControl]="formControl"
-      (paste)="onPaste($event)"
       (mouseenter)="onMouseEnter()"
       (mouseleave)="onMouseLeave()"
       (focus)="onFocus()"

@@ -27,22 +27,24 @@ import {
 import { OTPSlot } from '../../types';
 import { DOCUMENT } from '@angular/common';
 
-const PWM_BADGE_MARGIN_RIGHT = 18;
+// TODO: Fix password manager badge tracking
+// const PWM_BADGE_MARGIN_RIGHT = 18;
 const PWM_BADGE_SPACE_WIDTH_PX = 40;
 const PWM_BADGE_SPACE_WIDTH = `${PWM_BADGE_SPACE_WIDTH_PX}px`;
 
-const PASSWORD_MANAGERS_SELECTORS = [
-  '[data-lastpass-icon-root]', // LastPass
-  'com-1password-button', // 1Password
-  '[data-dashlanecreated]', // Dashlane
-  '[style$="2147483647 !important;"]', // Bitwarden
-].join(',');
+// TODO: Fix password manager badge tracking
+// const PASSWORD_MANAGERS_SELECTORS = [
+//   '[data-lastpass-icon-root]', // LastPass
+//   'com-1password-button', // 1Password
+//   '[data-dashlanecreated]', // Dashlane
+//   '[style$="2147483647 !important;"]', // Bitwarden
+// ].join(',');
 
 @Component({
-  selector: 'lib-input-otp',
+  selector: 'input-otp',
   imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './input-otp.component.html',
-  exportAs: 'libInputOtp',
+  exportAs: 'inputOtp',
   styleUrls: ['./input-otp.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -78,8 +80,8 @@ export class InputOTPComponent
   @Input() autoComplete?: string;
   @Input() pushPasswordManagerStrategy: 'increase-width' | 'none' =
     'increase-width';
-  @Input() containerClassName?: string;
-
+  @Input() containerClass?: string;
+  @Input() pasteTransformer?: (content: string | undefined) => string;
   @Output() complete = new EventEmitter<string>();
 
   mirrorSelectionStart: number | null = null;
@@ -88,10 +90,14 @@ export class InputOTPComponent
   get isFocused() {
     return this._isFocused;
   }
+  /**
+   * Every time the input's focus state changes, the slots are recomputed.
+   */
   set isFocused(value: boolean) {
     this._isFocused = value;
-
     this.slots.set(this.computeSlots());
+    // TODO
+    // this.valueOrFocusChanged();
   }
   isHovering = false;
   hasPWMBadge = false;
@@ -121,23 +127,61 @@ export class InputOTPComponent
     };
   });
   private renderer2 = inject(Renderer2);
+  private isIOS = false;
 
   constructor() {
     this.formControl.addValidators([this.validate.bind(this)]);
     this.formControl.valueChanges.subscribe((newValue) => {
+      // TODO
+      // this.valueOrFocusChanged();
       this.setMirrorValues();
       this.slots.set(this.computeSlots());
+      const maybeHasDeleted =
+        typeof this.previousValue === 'string' &&
+        newValue !== null &&
+        newValue.length < this.previousValue.length;
+      if (maybeHasDeleted) {
+        // Since cutting/deleting text doesn't trigger
+        // selectionchange event, we'll have to dispatch it manually.
+        // NOTE: The following line also triggers when cmd+A then pasting
+        // a value with smaller length, which is not ideal for performance.
+        this.document.dispatchEvent(new Event('selectionchange'));
+      }
       if (
         this.previousValue !== null &&
         this.previousValue.length < this.maxLength() &&
-        newValue?.length === this.maxLength()
+        this.formControl.valid
       ) {
-        this.complete.emit(newValue);
+        // formControl.valid is true if the value is valid, so we can safely emit the value
+        this.complete.emit(newValue!);
       }
-
       this.previousValue = newValue;
     });
   }
+
+  // TODO
+  // private valueOrFocusChanged() {
+  //   syncTimeouts(() => {
+  //     // Forcefully remove :autofill state
+  //     this.inputRef()?.nativeElement.dispatchEvent(new Event('input'));
+  //     // Update the selection state
+  //     const s = this.inputRef()?.nativeElement.selectionStart;
+  //     const e = this.inputRef()?.nativeElement.selectionEnd;
+  //     const dir = this.inputRef()?.nativeElement.selectionDirection;
+  //     if (
+  //       s !== null &&
+  //       e !== null &&
+  //       s !== undefined &&
+  //       e !== undefined &&
+  //       dir !== undefined &&
+  //       dir !== null
+  //     ) {
+  //       this.mirrorSelectionStart = s;
+  //       this.mirrorSelectionEnd = e;
+  //       this.inputMetadataRef.set({ prev: [s, e, dir] });
+  //     }
+  //   });
+  // }
 
   private computeSlots() {
     const value = this.formControl.value;
@@ -245,7 +289,12 @@ export class InputOTPComponent
   }
 
   ngAfterViewInit() {
-    this.setupPasswordManagerBadgeTracking();
+    // TODO: Fix iOS pasting
+    // this.isIOS =
+    //   typeof window !== 'undefined' &&
+    //   window?.CSS?.supports?.('-webkit-touch-callout', 'none');
+    // TODO: Fix password manager badge tracking
+    // this.setupPasswordManagerBadgeTracking();
     this.setupResizeObserver();
     if (this.document.activeElement === this.inputRef()?.nativeElement) {
       this.isFocused = true;
@@ -377,46 +426,57 @@ export class InputOTPComponent
     this.timeouts.forEach(clearTimeout);
     this.resizeObserver?.disconnect();
   }
-  onPaste(event: ClipboardEvent) {
-    const input = this.inputRef()?.nativeElement;
-    if (!input) return;
 
-    const content = event.clipboardData?.getData('text/plain');
-    if (!content) return;
+  // TODO: Fix iOS pasting
+  // onPaste(event: ClipboardEvent) {
+  //   const input = this.inputRef()?.nativeElement;
+  //   if (!input) return;
 
-    event.preventDefault();
+  //   if (
+  //     !this.pasteTransformer &&
+  //     (!this.isIOS || !event.clipboardData || !input)
+  //   ) {
+  //     return;
+  //   }
 
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
+  //   const _content = event.clipboardData?.getData('text/plain');
+  //   const content = this.pasteTransformer
+  //     ? this.pasteTransformer(_content)
+  //     : _content;
+  //   if (!content) return;
+  //   event.preventDefault();
 
-    const isReplacing = start !== end;
-    const value = this.formControl.value;
+  //   const start = input.selectionStart;
+  //   const end = input.selectionEnd;
 
-    const newValueUncapped = isReplacing
-      ? value?.slice(0, start!) + content + value?.slice(end!) // Replacing
-      : value?.slice(0, start!) + content + value?.slice(start!); // Inserting
-    const newValue = newValueUncapped?.slice(0, this.maxLength());
+  //   const isReplacing = start !== end;
+  //   const value = this.formControl.value;
 
-    if (this.pattern) {
-      const regexp =
-        typeof this.pattern === 'string'
-          ? new RegExp(this.pattern)
-          : this.pattern;
-      if (newValue.length > 0 && !regexp.test(newValue)) {
-        return;
-      }
-    }
+  //   const newValueUncapped = isReplacing
+  //     ? value?.slice(0, start!) + content + value?.slice(end!) // Replacing
+  //     : value?.slice(0, start!) + content + value?.slice(start!); // Inserting
+  //   const newValue = newValueUncapped?.slice(0, this.maxLength());
 
-    this.formControl.setValue(newValue);
+  //   if (this.pattern) {
+  //     const regexp =
+  //       typeof this.pattern === 'string'
+  //         ? new RegExp(this.pattern)
+  //         : this.pattern;
+  //     if (newValue.length > 0 && !regexp.test(newValue)) {
+  //       return;
+  //     }
+  //   }
 
-    const _start = Math.min(newValue.length, this.maxLength() - 1);
-    const _end = newValue.length;
+  //   this.formControl.setValue(newValue);
 
-    input.setSelectionRange(_start, _end);
-    this.mirrorSelectionStart = _start;
-    this.mirrorSelectionEnd = _end;
-    this.slots.set(this.computeSlots());
-  }
+  //   const _start = Math.min(newValue.length, this.maxLength() - 1);
+  //   const _end = newValue.length;
+
+  //   input.setSelectionRange(_start, _end);
+  //   this.mirrorSelectionStart = _start;
+  //   this.mirrorSelectionEnd = _end;
+  //   this.slots.set(this.computeSlots());
+  // }
 
   onMouseEnter() {
     this.isHovering = true;
@@ -447,63 +507,64 @@ export class InputOTPComponent
     this.isFocused = false;
   }
 
-  private setupPasswordManagerBadgeTracking() {
-    if (this.pushPasswordManagerStrategy === 'none') return;
+  // TODO: Fix password manager badge tracking
+  // private setupPasswordManagerBadgeTracking() {
+  //   if (this.pushPasswordManagerStrategy === 'none') return;
 
-    const trackPWMBadge = () => {
-      const container = this.containerRef()?.nativeElement;
-      const input = this.inputRef()?.nativeElement;
-      if (!container || !input || this.done) return;
+  //   const trackPWMBadge = () => {
+  //     const container = this.containerRef()?.nativeElement;
+  //     const input = this.inputRef()?.nativeElement;
+  //     if (!container || !input || this.done) return;
 
-      const elementToCompare = container;
+  //     const elementToCompare = container;
 
-      const rightCornerX =
-        elementToCompare.getBoundingClientRect().left +
-        elementToCompare.offsetWidth;
-      const centereredY =
-        elementToCompare.getBoundingClientRect().top +
-        elementToCompare.offsetHeight / 2;
-      const x = rightCornerX - PWM_BADGE_MARGIN_RIGHT;
-      const y = centereredY;
+  //     const rightCornerX =
+  //       elementToCompare.getBoundingClientRect().left +
+  //       elementToCompare.offsetWidth;
+  //     const centereredY =
+  //       elementToCompare.getBoundingClientRect().top +
+  //       elementToCompare.offsetHeight / 2;
+  //     const x = rightCornerX - PWM_BADGE_MARGIN_RIGHT;
+  //     const y = centereredY;
 
-      const pmws = document.querySelectorAll(PASSWORD_MANAGERS_SELECTORS);
+  //     const pmws = document.querySelectorAll(PASSWORD_MANAGERS_SELECTORS);
 
-      if (pmws.length === 0) {
-        const maybeBadgeEl = document.elementFromPoint(x, y);
-        if (maybeBadgeEl === container) return;
-      }
+  //     if (pmws.length === 0) {
+  //       const maybeBadgeEl = document.elementFromPoint(x, y);
+  //       if (maybeBadgeEl === container) return;
+  //     }
 
-      this.hasPWMBadge = true;
-      this.done = true;
-    };
+  //     this.hasPWMBadge = true;
+  //     this.done = true;
+  //   };
 
-    const checkHasSpace = () => {
-      const container = this.containerRef()?.nativeElement;
-      if (!container) return;
+  //   const checkHasSpace = () => {
+  //     const container = this.containerRef()?.nativeElement;
+  //     if (!container) return;
 
-      const viewportWidth = window.innerWidth;
-      const distanceToRightEdge =
-        viewportWidth - container.getBoundingClientRect().right;
-      this.hasPWMBadgeSpace = distanceToRightEdge >= PWM_BADGE_SPACE_WIDTH_PX;
-    };
+  //     const viewportWidth = window.innerWidth;
+  //     const distanceToRightEdge =
+  //       viewportWidth - container.getBoundingClientRect().right;
+  //     this.hasPWMBadgeSpace = distanceToRightEdge >= PWM_BADGE_SPACE_WIDTH_PX;
+  //   };
 
-    // Initial check
-    checkHasSpace();
+  //   // Initial check
+  //   checkHasSpace();
 
-    // Setup interval for space checking
-    const interval = setInterval(checkHasSpace, 1000);
-    this.timeouts.push(interval);
+  //   // Setup interval for space checking
+  //   const interval = setInterval(checkHasSpace, 1000);
+  //   this.timeouts.push(interval);
 
-    // Setup timeouts for badge tracking
-    this.timeouts.push(setTimeout(trackPWMBadge, 0));
-    this.timeouts.push(setTimeout(trackPWMBadge, 2000));
-    this.timeouts.push(setTimeout(trackPWMBadge, 5000));
-    this.timeouts.push(
-      setTimeout(() => {
-        this.done = true;
-      }, 6000),
-    );
-  }
+  //   // Setup timeouts for badge tracking
+  //   this.timeouts.push(setTimeout(trackPWMBadge, 0));
+  //   this.timeouts.push(setTimeout(trackPWMBadge, 2000));
+  //   this.timeouts.push(setTimeout(trackPWMBadge, 5000));
+  //   this.timeouts.push(
+  //     setTimeout(() => {
+  //       this.done = true;
+  //     }, 6000),
+  //   );
+  // }
 
   private setupResizeObserver() {
     if (typeof ResizeObserver === 'undefined') return;
