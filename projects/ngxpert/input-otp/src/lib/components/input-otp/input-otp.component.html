@@ -1,8 +1,8 @@
 <div
   #containerRef
-  [class]="containerClass || ''"
+  [class]="containerClass()"
   data-input-otp-container
-  [style]="rootStyle"
+  [style]="rootStyle()"
 >
   <ng-content></ng-content>
   <div
@@ -15,21 +15,22 @@
     <input
       #inputRef
       data-input-otp
+      [id]="id() ?? idNextId"
+      [name]="name() ?? ''"
       [attr.data-input-otp-placeholder-shown]="formControl.value?.length === 0 || undefined"
-      [attr.data-input-otp-mss]="mirrorSelectionStart || undefined"
-      [attr.data-input-otp-mse]="mirrorSelectionEnd || undefined"
-      [attr.inputMode]="inputMode"
-      [attr.pattern]="pattern"
-      [attr.aria-placeholder]="placeholder"
-      [style]="inputStyle"
+      [attr.data-input-otp-mss]="mirrorSelectionStart() || undefined"
+      [attr.data-input-otp-mse]="mirrorSelectionEnd() || undefined"
+      [attr.inputMode]="inputMode()"
+      [attr.pattern]="pattern()"
+      [attr.aria-placeholder]="placeholder()"
+      [style]="inputStyle()"
       [maxLength]="maxLength()"
       [formControl]="formControl"
       (mouseenter)="onMouseEnter()"
       (mouseleave)="onMouseLeave()"
       (focus)="onFocus()"
       (blur)="onBlur()"
-      [autocomplete]="autoComplete || 'one-time-code'"
-      (selectionchange)="onSelectionChange($event)"
+      [autocomplete]="autoComplete() || 'one-time-code'"
     />
   </div>
 </div>

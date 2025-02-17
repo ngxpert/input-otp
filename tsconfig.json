@@ -4,9 +4,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@ngxpert/input-otp": [
-        "./dist/ngxpert/input-otp"
-      ]
+      "@ngxpert/input-otp": ["./dist/ngxpert/input-otp"],
+      "@lib/*": ["./src/app/lib/*"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

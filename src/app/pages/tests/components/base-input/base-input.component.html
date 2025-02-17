@@ -1,0 +1,46 @@
+<input-otp
+  [(ngModel)]="value"
+  [disabled]="disabled"
+  [containerClass]="
+    cn('group flex items-center', containerClass, {
+      'opacity-50': disabled,
+    })
+  "
+  [maxLength]="maxLength"
+  [inputMode]="inputMode"
+  [pattern]="pattern ?? ''"
+  [placeholder]="placeholder"
+  [id]="id"
+  [name]="name ?? ''"
+  #otpInput="inputOtp"
+  (complete)="complete.emit($event)"
+>
+  <div
+    [class]="cn('flex items-center gap-1', { 'opacity-50': disabled })"
+    data-testid="input-otp-renderer"
+    [attr.data-test-render-is-hovering]="
+      otpInput.isHovering() ? 'true' : undefined
+    "
+    [attr.data-test-render-is-focused]="
+      otpInput.isFocused() ? 'true' : undefined
+    "
+  >
+    @for (slot of otpInput.slots(); track $index) {
+      <div
+        [attr.data-testid]="'slot-' + $index"
+        [attr.data-test-char]="slot.char ?? undefined"
+        [class]="
+          cn(
+            'transition-all duration-300 rounded-md border-black bg-white text-black w-10 h-14 border-[4px]',
+            {
+              'border-[green]': otpInput.isFocused,
+              'border-[red]': slot.isActive,
+            }
+          )
+        "
+      >
+        {{ slot.char !== null ? slot.char : " " }}
+      </div>
+    }
+  </div>
+</input-otp>

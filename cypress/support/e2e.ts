@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
+// import './commands';
 
 describe('Open dev app', () => {
   it('should visit dev app', () => {

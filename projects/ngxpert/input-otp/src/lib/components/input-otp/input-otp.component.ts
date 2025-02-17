@@ -2,15 +2,17 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   ElementRef,
-  EventEmitter,
   inject,
+  Injector,
   input,
-  Input,
   linkedSignal,
   OnDestroy,
-  Output,
+  output,
   Renderer2,
+  signal,
   viewChild,
 } from '@angular/core';
 import {
@@ -26,6 +28,7 @@ import {
 } from '@angular/forms';
 import { OTPSlot } from '../../types';
 import { DOCUMENT } from '@angular/common';
+import { getControlValueSignal } from '../../control-value-signal';
 
 // TODO: Fix password manager badge tracking
 // const PWM_BADGE_MARGIN_RIGHT = 18;
@@ -67,147 +70,106 @@ export class InputOTPComponent
   implements AfterViewInit, OnDestroy, ControlValueAccessor, Validator
 {
   static nextId = 0;
-  readonly id = `input-otp-${InputOTPComponent.nextId++}`;
+  readonly idNextId = `input-otp-${InputOTPComponent.nextId++}`;
+  id = input<string | undefined>(this.idNextId);
+  name = input<string | undefined>();
   containerRef = viewChild<ElementRef<HTMLDivElement>>('containerRef');
   inputRef = viewChild<ElementRef<HTMLInputElement>>('inputRef');
 
   maxLength = input.required<number>();
-  @Input() textAlign: 'left' | 'center' | 'right' = 'left';
-  @Input() pattern?: string | RegExp;
-  @Input() placeholder?: string;
-  @Input() inputMode: 'numeric' | 'text' = 'numeric';
-  @Input() disabled = false;
-  @Input() autoComplete?: string;
-  @Input() pushPasswordManagerStrategy: 'increase-width' | 'none' =
-    'increase-width';
-  @Input() containerClass?: string;
-  @Input() pasteTransformer?: (content: string | undefined) => string;
-  @Output() complete = new EventEmitter<string>();
+  textAlign = input<'left' | 'center' | 'right'>('left');
+  pattern = input<string | RegExp>();
+  placeholder = input<string>();
+  inputMode = input<'numeric' | 'text'>('numeric');
+  disabled = input<boolean>(false);
+  autoComplete = input<string>();
+  pushPasswordManagerStrategy = input<'increase-width' | 'none'>(
+    'increase-width',
+  );
+  containerClass = input<string>();
+  pasteTransformer = input<(content: string | undefined) => string>();
+  complete = output<string>();
 
-  mirrorSelectionStart: number | null = null;
-  mirrorSelectionEnd: number | null = null;
-  private _isFocused = false;
-  get isFocused() {
-    return this._isFocused;
-  }
-  /**
-   * Every time the input's focus state changes, the slots are recomputed.
-   */
-  set isFocused(value: boolean) {
-    this._isFocused = value;
-    this.slots.set(this.computeSlots());
-    // TODO
-    // this.valueOrFocusChanged();
-  }
-  isHovering = false;
-  hasPWMBadge = false;
-  hasPWMBadgeSpace = false;
-  done = false;
+  mirrorSelectionStart = signal<number | null>(null);
+  mirrorSelectionEnd = signal<number | null>(null);
+  isFocused = signal(false);
+  isHovering = signal(false);
+  hasPWMBadge = signal(false);
+  hasPWMBadgeSpace = signal(false);
+  done = signal(false);
   formControl = new FormControl('');
-  slots = linkedSignal<OTPSlot[]>(() => this.computeSlots());
+  value = getControlValueSignal(this.formControl, inject(Injector));
+  slots = computed<OTPSlot[]>(() => {
+    const slots: OTPSlot[] = [];
+    for (let i = 0; i < this.maxLength(); i++) {
+      const mirrorSelectionStart = this.mirrorSelectionStart();
+      const mirrorSelectionEnd = this.mirrorSelectionEnd();
+      const isActive =
+        this.isFocused() &&
+        mirrorSelectionStart !== null &&
+        mirrorSelectionEnd !== null &&
+        ((mirrorSelectionStart === mirrorSelectionEnd &&
+          i === mirrorSelectionStart) ||
+          (i >= mirrorSelectionStart && i < mirrorSelectionEnd));
 
-  private timeouts: ReturnType<typeof setTimeout>[] = [];
-  private resizeObserver?: ResizeObserver;
-  private previousValue: string | null = null;
-  private document = inject(DOCUMENT);
-  private inputMetadataRef = linkedSignal<{
-    prev:
-      | [number | null, number | null, 'none' | 'forward' | 'backward' | null]
-      | null;
-  }>(() => {
-    const input = this.inputRef()?.nativeElement;
-    if (!input) return { prev: null };
-
-    return {
-      prev: [
-        input.selectionStart,
-        input.selectionEnd,
-        input.selectionDirection,
-      ],
-    };
+      const value = this.value();
+      const char = value && value[i] !== undefined ? value[i] : null;
+      const placeholderChar =
+        value && value[0] !== undefined
+          ? null
+          : (this.placeholder()?.[i] ?? null);
+      slots.push({
+        char,
+        placeholderChar,
+        isActive,
+        hasFakeCaret: isActive && char === null,
+      });
+    }
+    return slots;
   });
+
+  private resizeObserver?: ResizeObserver;
+  private previousValue: string | null | undefined;
+  private document = inject(DOCUMENT);
   private renderer2 = inject(Renderer2);
   private isIOS = false;
+  private inputMetadataRef = linkedSignal<{
+    prev: [
+      number | null,
+      number | null,
+      'none' | 'forward' | 'backward' | null,
+    ];
+  }>(() => ({
+    prev: [
+      this.inputRef()?.nativeElement?.selectionStart ?? null,
+      this.inputRef()?.nativeElement?.selectionEnd ?? null,
+      this.inputRef()?.nativeElement?.selectionDirection ?? 'none',
+    ],
+  }));
+  private onDocumentSelectionChange?: () => void;
 
   constructor() {
     this.formControl.addValidators([this.validate.bind(this)]);
-    this.formControl.valueChanges.subscribe((newValue) => {
-      // TODO
-      // this.valueOrFocusChanged();
-      this.setMirrorValues();
-      this.slots.set(this.computeSlots());
-      const maybeHasDeleted =
-        typeof this.previousValue === 'string' &&
-        newValue !== null &&
-        newValue.length < this.previousValue.length;
-      if (maybeHasDeleted) {
-        // Since cutting/deleting text doesn't trigger
-        // selectionchange event, we'll have to dispatch it manually.
-        // NOTE: The following line also triggers when cmd+A then pasting
-        // a value with smaller length, which is not ideal for performance.
-        this.document.dispatchEvent(new Event('selectionchange'));
-      }
+    effect(() => {
+      const newValue = this.value();
       if (
         this.previousValue !== null &&
+        this.previousValue !== undefined &&
         this.previousValue.length < this.maxLength() &&
         this.formControl.valid
       ) {
         // formControl.valid is true if the value is valid, so we can safely emit the value
-        this.complete.emit(newValue!);
+        this.valueOrFocusedChanged();
+
+        if (
+          newValue !== null &&
+          newValue !== undefined &&
+          newValue.length === this.maxLength()
+        ) {
+          this.complete.emit(newValue);
+        }
       }
       this.previousValue = newValue;
-    });
-  }
-
-  // TODO
-  // private valueOrFocusChanged() {
-  //   syncTimeouts(() => {
-  //     // Forcefully remove :autofill state
-  //     this.inputRef()?.nativeElement.dispatchEvent(new Event('input'));
-  //     // Update the selection state
-  //     const s = this.inputRef()?.nativeElement.selectionStart;
-  //     const e = this.inputRef()?.nativeElement.selectionEnd;
-  //     const dir = this.inputRef()?.nativeElement.selectionDirection;
-  //     if (
-  //       s !== null &&
-  //       e !== null &&
-  //       s !== undefined &&
-  //       e !== undefined &&
-  //       dir !== undefined &&
-  //       dir !== null
-  //     ) {
-  //       this.mirrorSelectionStart = s;
-  //       this.mirrorSelectionEnd = e;
-  //       this.inputMetadataRef.set({ prev: [s, e, dir] });
-  //     }
-  //   });
-  // }
-
-  private computeSlots() {
-    const value = this.formControl.value;
-    const maxLength = this.maxLength();
-    return Array.from({ length: maxLength }).map((_, slotIdx) => {
-      const isActive =
-        this.isFocused &&
-        this.mirrorSelectionStart !== null &&
-        this.mirrorSelectionEnd !== null &&
-        ((this.mirrorSelectionStart === this.mirrorSelectionEnd &&
-          slotIdx === this.mirrorSelectionStart) ||
-          (slotIdx >= this.mirrorSelectionStart &&
-            slotIdx < this.mirrorSelectionEnd));
-
-      const char =
-        value && value?.[slotIdx] !== undefined ? value[slotIdx] : null;
-      const placeholderChar =
-        value && value?.[0] !== undefined
-          ? null
-          : (this.placeholder?.[slotIdx] ?? null);
-      return {
-        isActive,
-        char,
-        placeholderChar,
-        hasFakeCaret: isActive && char === null,
-      };
     });
   }
 
@@ -232,33 +194,50 @@ export class InputOTPComponent
     if (value?.length !== this.maxLength()) {
       return { length: true };
     }
-    if (this.pattern) {
-      const regexp =
-        typeof this.pattern === 'string'
-          ? new RegExp(this.pattern)
-          : this.pattern;
-      if (value?.length > 0 && !regexp.test(value)) {
-        return { pattern: true };
-      }
+    const pattern = this.pattern();
+    const regexp = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+    if (value?.length > 0 && !regexp?.test(value)) {
+      return { pattern: true };
     }
     return null;
   }
 
-  get rootStyle(): Record<string, string> {
-    return {
-      position: 'relative',
-      cursor: this.disabled ? 'default' : 'text',
-      userSelect: 'none',
-      WebkitUserSelect: 'none',
-      pointerEvents: 'none',
-    };
+  private valueOrFocusedChanged() {
+    // Forcefully remove :autofill state
+    console.log('valueOrFocusedChanged');
+    this.inputRef()?.nativeElement?.dispatchEvent(new Event('input'));
+
+    // Update the selection state
+    const s = this.inputRef()?.nativeElement?.selectionStart;
+    const e = this.inputRef()?.nativeElement?.selectionEnd;
+    const dir = this.inputRef()?.nativeElement?.selectionDirection;
+    if (
+      s !== null &&
+      s !== undefined &&
+      e !== null &&
+      e !== undefined &&
+      dir !== null &&
+      dir !== undefined
+    ) {
+      this.mirrorSelectionStart.set(s);
+      this.mirrorSelectionEnd.set(e);
+      this.inputMetadataRef.set({ prev: [s, e, dir] });
+    }
   }
 
-  get inputStyle(): Record<string, string | undefined> {
+  rootStyle = computed<Record<string, string>>(() => ({
+    position: 'relative',
+    cursor: this.disabled() ? 'default' : 'text',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    pointerEvents: 'none',
+  }));
+
+  inputStyle = computed<Record<string, string | undefined>>(() => {
     const willPushPWMBadge =
-      this.pushPasswordManagerStrategy !== 'none' &&
-      this.hasPWMBadge &&
-      this.hasPWMBadgeSpace;
+      this.pushPasswordManagerStrategy() !== 'none' &&
+      this.hasPWMBadge() &&
+      this.hasPWMBadgeSpace();
 
     return {
       position: 'absolute',
@@ -271,7 +250,7 @@ export class InputOTPComponent
         : undefined,
       height: '100%',
       display: 'flex',
-      textAlign: this.textAlign,
+      textAlign: this.textAlign(),
       opacity: '1',
       color: 'transparent',
       pointerEvents: 'all',
@@ -286,18 +265,87 @@ export class InputOTPComponent
       fontFamily: 'monospace',
       fontVariantNumeric: 'tabular-nums',
     };
-  }
+  });
 
   ngAfterViewInit() {
-    // TODO: Fix iOS pasting
-    // this.isIOS =
-    //   typeof window !== 'undefined' &&
-    //   window?.CSS?.supports?.('-webkit-touch-callout', 'none');
-    // TODO: Fix password manager badge tracking
-    // this.setupPasswordManagerBadgeTracking();
     this.setupResizeObserver();
+    const onDocumentSelectionChange = () => {
+      const input = this.inputRef()?.nativeElement;
+      if (this.document.activeElement !== input) {
+        this.mirrorSelectionStart.set(null);
+        this.mirrorSelectionEnd.set(null);
+        return;
+      }
+
+      // Aliases
+      const _s = input.selectionStart;
+      const _e = input.selectionEnd;
+      const _dir = input.selectionDirection;
+      const _ml = input.maxLength;
+      const _val = input.value;
+      const _prev = this.inputMetadataRef().prev;
+
+      // Algorithm
+      let start = -1;
+      let end = -1;
+      let direction: 'forward' | 'backward' | 'none' | undefined;
+      if (_val.length !== 0 && _s !== null && _e !== null) {
+        const isSingleCaret = _s === _e;
+        const isInsertMode = _s === _val.length && _val.length < _ml;
+
+        if (isSingleCaret && !isInsertMode) {
+          const c = _s;
+          if (c === 0) {
+            start = 0;
+            end = 1;
+            direction = 'forward';
+          } else if (c === _ml) {
+            start = c - 1;
+            end = c;
+            direction = 'backward';
+          } else if (_ml > 1 && _val.length > 1) {
+            let offset = 0;
+            if (_prev[0] !== null && _prev[1] !== null) {
+              direction = c < _prev[1] ? 'backward' : 'forward';
+              const wasPreviouslyInserting =
+                _prev[0] === _prev[1] && _prev[0] < _ml;
+              if (direction === 'backward' && !wasPreviouslyInserting) {
+                offset = -1;
+              }
+            }
+
+            start = offset + c;
+            end = offset + c + 1;
+          }
+        }
+
+        if (start !== -1 && end !== -1 && start !== end) {
+          input.setSelectionRange(start, end, direction);
+        }
+      }
+
+      // Finally, update the state
+      const s = start !== -1 ? start : _s;
+      const e = end !== -1 ? end : _e;
+      const dir = direction ?? _dir;
+      this.mirrorSelectionStart.set(s);
+      this.mirrorSelectionEnd.set(e);
+      // Store the previous selection value
+      this.inputMetadataRef.set({ prev: [s, e, dir] });
+    };
+    this.document.addEventListener(
+      'selectionchange',
+      onDocumentSelectionChange,
+      {
+        capture: true,
+      },
+    );
+
+    // Set initial mirror state
+    onDocumentSelectionChange();
+    this.onDocumentSelectionChange = onDocumentSelectionChange;
     if (this.document.activeElement === this.inputRef()?.nativeElement) {
-      this.isFocused = true;
+      this.changeFocus(true);
     }
     // Apply needed styles
     if (!this.document.getElementById('input-otp-style')) {
@@ -354,217 +402,38 @@ export class InputOTPComponent
     }
   }
 
-  onSelectionChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input) return;
-
-    if (this.document.activeElement !== input) {
-      this.mirrorSelectionStart = null;
-      this.mirrorSelectionEnd = null;
-      return;
-    }
-
-    // Aliases
-    const _s = input.selectionStart;
-    const _e = input.selectionEnd;
-    const _dir = input.selectionDirection;
-    const _ml = input.maxLength;
-    const _val = input.value;
-    const _prev = this.inputMetadataRef().prev;
-
-    // Algorithm
-    let start = -1;
-    let end = -1;
-    let direction: 'none' | 'forward' | 'backward' | undefined = undefined;
-    if (_val.length !== 0 && _s !== null && _e !== null) {
-      const isSingleCaret = _s === _e;
-      const isInsertMode = _s === _val.length && _val.length < _ml;
-
-      if (isSingleCaret && !isInsertMode) {
-        const c = _s;
-        if (c === 0) {
-          start = 0;
-          end = 1;
-          direction = 'forward';
-        } else if (c === _ml) {
-          start = c - 1;
-          end = c;
-          direction = 'backward';
-        } else if (_ml > 1 && _val.length > 1) {
-          let offset = 0;
-          if (_prev?.[0] !== null && _prev?.[1] !== null) {
-            direction = c < _prev![1] ? 'backward' : 'forward';
-            const wasPreviouslyInserting =
-              _prev?.[0] === _prev![1] && _prev![0] < _ml;
-            if (direction === 'backward' && !wasPreviouslyInserting) {
-              offset = -1;
-            }
-          }
-
-          start = offset + c;
-          end = offset + c + 1;
-        }
-      }
-
-      if (start !== -1 && end !== -1 && start !== end) {
-        input.setSelectionRange(start, end, direction);
-      }
-    }
-
-    // Finally, update the state
-    const s = start !== -1 ? start : _s;
-    const e = end !== -1 ? end : _e;
-    const dir = direction ?? _dir;
-    this.mirrorSelectionStart = s;
-    this.mirrorSelectionEnd = e;
-    this.slots.set(this.computeSlots());
-    // Store the previous selection value
-    this.inputMetadataRef.set({ prev: [s, e, dir] });
-  }
-
   ngOnDestroy() {
-    this.timeouts.forEach(clearTimeout);
     this.resizeObserver?.disconnect();
+    if (this.onDocumentSelectionChange) {
+      this.document.removeEventListener(
+        'selectionchange',
+        this.onDocumentSelectionChange,
+        { capture: true },
+      );
+    }
   }
-
-  // TODO: Fix iOS pasting
-  // onPaste(event: ClipboardEvent) {
-  //   const input = this.inputRef()?.nativeElement;
-  //   if (!input) return;
-
-  //   if (
-  //     !this.pasteTransformer &&
-  //     (!this.isIOS || !event.clipboardData || !input)
-  //   ) {
-  //     return;
-  //   }
-
-  //   const _content = event.clipboardData?.getData('text/plain');
-  //   const content = this.pasteTransformer
-  //     ? this.pasteTransformer(_content)
-  //     : _content;
-  //   if (!content) return;
-  //   event.preventDefault();
-
-  //   const start = input.selectionStart;
-  //   const end = input.selectionEnd;
-
-  //   const isReplacing = start !== end;
-  //   const value = this.formControl.value;
-
-  //   const newValueUncapped = isReplacing
-  //     ? value?.slice(0, start!) + content + value?.slice(end!) // Replacing
-  //     : value?.slice(0, start!) + content + value?.slice(start!); // Inserting
-  //   const newValue = newValueUncapped?.slice(0, this.maxLength());
-
-  //   if (this.pattern) {
-  //     const regexp =
-  //       typeof this.pattern === 'string'
-  //         ? new RegExp(this.pattern)
-  //         : this.pattern;
-  //     if (newValue.length > 0 && !regexp.test(newValue)) {
-  //       return;
-  //     }
-  //   }
-
-  //   this.formControl.setValue(newValue);
-
-  //   const _start = Math.min(newValue.length, this.maxLength() - 1);
-  //   const _end = newValue.length;
-
-  //   input.setSelectionRange(_start, _end);
-  //   this.mirrorSelectionStart = _start;
-  //   this.mirrorSelectionEnd = _end;
-  //   this.slots.set(this.computeSlots());
-  // }
 
   onMouseEnter() {
-    this.isHovering = true;
+    this.isHovering.set(true);
   }
 
   onMouseLeave() {
-    this.isHovering = false;
+    this.isHovering.set(false);
   }
 
   onFocus() {
-    this.setMirrorValues();
-    this.isFocused = true;
-  }
-
-  private setMirrorValues() {
-    const input = this.inputRef()?.nativeElement;
-    const value = this.formControl.value;
-    if (input) {
-      const start = Math.min(value?.length ?? 0, this.maxLength() - 1);
-      const end = value?.length ?? 0;
-      input.setSelectionRange(start, end);
-      this.mirrorSelectionStart = start;
-      this.mirrorSelectionEnd = end;
-    }
+    this.changeFocus(true);
   }
 
   onBlur() {
-    this.isFocused = false;
+    this.changeFocus(false);
   }
 
-  // TODO: Fix password manager badge tracking
-  // private setupPasswordManagerBadgeTracking() {
-  //   if (this.pushPasswordManagerStrategy === 'none') return;
-
-  //   const trackPWMBadge = () => {
-  //     const container = this.containerRef()?.nativeElement;
-  //     const input = this.inputRef()?.nativeElement;
-  //     if (!container || !input || this.done) return;
-
-  //     const elementToCompare = container;
-
-  //     const rightCornerX =
-  //       elementToCompare.getBoundingClientRect().left +
-  //       elementToCompare.offsetWidth;
-  //     const centereredY =
-  //       elementToCompare.getBoundingClientRect().top +
-  //       elementToCompare.offsetHeight / 2;
-  //     const x = rightCornerX - PWM_BADGE_MARGIN_RIGHT;
-  //     const y = centereredY;
-
-  //     const pmws = document.querySelectorAll(PASSWORD_MANAGERS_SELECTORS);
-
-  //     if (pmws.length === 0) {
-  //       const maybeBadgeEl = document.elementFromPoint(x, y);
-  //       if (maybeBadgeEl === container) return;
-  //     }
-
-  //     this.hasPWMBadge = true;
-  //     this.done = true;
-  //   };
-
-  //   const checkHasSpace = () => {
-  //     const container = this.containerRef()?.nativeElement;
-  //     if (!container) return;
-
-  //     const viewportWidth = window.innerWidth;
-  //     const distanceToRightEdge =
-  //       viewportWidth - container.getBoundingClientRect().right;
-  //     this.hasPWMBadgeSpace = distanceToRightEdge >= PWM_BADGE_SPACE_WIDTH_PX;
-  //   };
-
-  //   // Initial check
-  //   checkHasSpace();
-
-  //   // Setup interval for space checking
-  //   const interval = setInterval(checkHasSpace, 1000);
-  //   this.timeouts.push(interval);
-
-  //   // Setup timeouts for badge tracking
-  //   this.timeouts.push(setTimeout(trackPWMBadge, 0));
-  //   this.timeouts.push(setTimeout(trackPWMBadge, 2000));
-  //   this.timeouts.push(setTimeout(trackPWMBadge, 5000));
-  //   this.timeouts.push(
-  //     setTimeout(() => {
-  //       this.done = true;
-  //     }, 6000),
-  //   );
-  // }
+  private changeFocus(value: boolean) {
+    console.log('changeFocus', value);
+    this.isFocused.set(value);
+    this.valueOrFocusedChanged();
+  }
 
   private setupResizeObserver() {
     if (typeof ResizeObserver === 'undefined') return;
