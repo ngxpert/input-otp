@@ -69,6 +69,7 @@
     "lint-staged": "^15.4.3",
     "ng-packagr": "^19.1.0",
     "prettier": "3.5.0",
+    "semantic-release": "^24.2.3",
     "serve": "^14.2.4",
     "shiki": "^2.3.2",
     "start-server-and-test": "^2.0.10",
