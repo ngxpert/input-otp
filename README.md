@@ -3,11 +3,12 @@
 ## OTP Input for Angular 🔐 by [@shhdharmen](https://twitter.com/shhdharmen)
 > Inspired from [guilhermerodz/input-otp](https://github.com/guilhermerodz/input-otp)
 
+![NPM Version](https://img.shields.io/npm/v/%40ngxpert%2Finput-otp)
+![GitHub License](https://img.shields.io/github/license/ngxpert/input-otp)
+[![input-otp](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/w78mnp&style=flat&logo=cypress)](https://cloud.cypress.io/projects/w78mnp/runs)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-![NPM Version](https://img.shields.io/npm/v/%40ngxpert%2Finput-otp)
-![GitHub License](https://img.shields.io/github/license/ngxpert/input-otp)
 
 ## Install
 
