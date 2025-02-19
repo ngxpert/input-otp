@@ -51,6 +51,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/jasmine": "~5.1.0",
+    "all-contributors-cli": "^6.26.1",
     "angular-cli-ghpages": "^2.0.3",
     "angular-eslint": "19.0.2",
     "clipboardy": "^4.0.0",
