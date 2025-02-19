@@ -1,59 +1,268 @@
-# InputOtp
+# The only accessible & unstyled & full featured Input OTP component for Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.6.
+### OTP Input for Angular 🔐 by [@shhdharmen](https://twitter.com/shhdharmen)
 
-## Development server
 
-To start a local development server, run:
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Usage
 
 ```bash
-ng generate component component-name
+ng add @ngxpert/input-otp
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Then import the component.
 
-```bash
-ng generate --help
+```ts
+import { InputOTPComponent } from '@ngxpert/input-otp';
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <input-otp [maxLength]="6" [(ngModel)]="otpValue">
+      <div class="flex">
+        @for (slot of otp.slots(); track $index) {
+          <div>{{ slot.char }}</div>
+        }
+      </div>
+    </input-otp>
+  `,
+  imports: [InputOTPComponent, FormsModule],
+})
+export class MyComponent {
+  otpValue = '';
+}
 ```
 
-## Building
+## Default example
 
-To build the project run:
+The example below uses `tailwindcss` `tailwind-merge` `clsx`:
 
-```bash
-ng build
+### main.component
+
+```tsx
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputOTPComponent } from '@ngxpert/input-otp';
+import { SlotComponent } from './slot.component';
+import { FakeDashComponent } from './fake-components';
+
+@Component({
+  selector: 'app-examples-main',
+  template: `
+    <input-otp
+      [maxLength]="6"
+      containerClass="group flex items-center has-[:disabled]:opacity-30"
+      [(ngModel)]="otpValue"
+      #otp="inputOtp"
+    >
+      <div class="flex">
+        @for (slot of otp.slots().slice(0, 3); track $index) {
+          <app-slot
+            [isActive]="slot.isActive"
+            [char]="slot.char"
+            [placeholderChar]="slot.placeholderChar"
+            [hasFakeCaret]="slot.hasFakeCaret"
+          />
+        }
+      </div>
+      <app-fake-dash />
+      <div class="flex">
+        @for (slot of otp.slots().slice(3, 6); track $index + 3) {
+          <app-slot
+            [isActive]="slot.isActive"
+            [char]="slot.char"
+            [placeholderChar]="slot.placeholderChar"
+            [hasFakeCaret]="slot.hasFakeCaret"
+          />
+        }
+      </div>
+    </input-otp>
+  `,
+  imports: [FormsModule, InputOTPComponent, SlotComponent, FakeDashComponent],
+})
+export class ExamplesMainComponent {
+  otpValue = '';
+}
+
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### slot.component
 
-## Running unit tests
+```ts
+import { Component, Input } from '@angular/core';
+import { FakeCaretComponent } from './fake-components';
+import { cn } from './utils';
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+@Component({
+  selector: 'app-slot',
+  template: `
+    <div
+      [class]="
+        cn(
+          'relative w-10 h-14 text-[2rem]',
+          'flex items-center justify-center',
+          'transition-all duration-300',
+          'border-border border-y border-r first:border-l first:rounded-l-md last:rounded-r-md',
+          'group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20',
+          'outline outline-0 outline-accent-foreground/20',
+          { 'outline-4 outline-accent-foreground': isActive }
+        )
+      "
+    >
+      @if (char) {
+        <div>{{ char }}</div>
+      } @else {
+        {{ ' ' }}
+      }
+      @if (hasFakeCaret) {
+        <app-fake-caret />
+      }
+    </div>
+  `,
+  imports: [FakeCaretComponent],
+})
+export class SlotComponent {
+  @Input() isActive = false;
+  @Input() char: string | null = null;
+  @Input() placeholderChar: string | null = null;
+  @Input() hasFakeCaret = false;
+  cn = cn;
+}
 
-```bash
-ng test
 ```
 
-## Running end-to-end tests
+### fake-components
 
-For end-to-end (e2e) testing, run:
+```ts
+import { Component } from '@angular/core';
 
-```bash
-ng e2e
+@Component({
+  selector: 'app-fake-dash',
+  template: `
+    <div class="flex w-10 justify-center items-center">
+      <div class="w-3 h-1 rounded-full bg-border"></div>
+    </div>
+  `,
+})
+export class FakeDashComponent {}
+
+@Component({
+  selector: 'app-fake-caret',
+  template: `
+    <div
+      class="absolute pointer-events-none inset-0 flex items-center justify-center animate-caret-blink"
+    >
+      <div class="w-px h-8 bg-white"></div>
+    </div>
+  `,
+})
+export class FakeCaretComponent {}
+
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### utils
 
-## Additional Resources
+```ts
+// Small utility to merge class names.
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+import type { ClassValue } from 'clsx';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+```
+
+## How it works
+
+There's currently no native OTP/2FA/MFA input in HTML, which means people are either going with
+
+1. a simple input design or
+2. custom designs like this one.
+
+This library works by rendering an invisible input as a sibling of the slots, contained by a `relative`ly positioned parent (the container root called _input-otp_).
+
+## Features
+
+### This is the most complete OTP input for Angular. It's fully featured
+
+Works with `Template-Driven Forms` and `Reactive Forms` out of the box.
+
+<details>
+<summary>Supports iOS + Android copy-paste-cut</summary>
+
+TBA video
+
+</details>
+
+<details>
+<summary>Automatic OTP code retrieval from transport (e.g SMS)</summary>
+
+By default, this input uses `autocomplete='one-time-code'` and it works as it's a single input. 
+
+TBA video
+
+</details>
+
+<details>
+<summary>Supports screen readers (a11y)</summary>
+
+Take a look at Stripe's input. The screen reader does not behave like it normally should on a normal single input.
+That's because Stripe's solution is to render a 1-digit input with "clone-divs" rendering a single char per div.
+
+https://github.com/guilhermerodz/input-otp/assets/10366880/3d127aef-147c-4f28-9f6c-57a357a802d0
+
+So we're rendering a single input with invisible/transparent colors instead.
+The screen reader now gets to read it, but there is no appearance. Feel free to build whatever UI you want:
+
+TBA video
+
+</details>
+
+<details>
+<summary>Supports all keybindings</summary>
+
+Should be able to support all keybindings of a common text input as it's an input.
+
+TBA video
+
+</details>
+
+## API Reference
+
+### `<input-otp>`
+
+The root container. Define settings for the input via inputs. Then, use the `inputOtp.slots()` property to create the slots.
+
+#### Inputs and outputs
+
+```ts
+export interface InputOTPInputsOutputs {
+  // The number of slots
+  maxLength: InputSignal<number>;
+
+  // Pro tip: input-otp export some patterns by default such as REGEXP_ONLY_DIGITS which you can import from the same library path
+  // Example: import { REGEXP_ONLY_DIGITS } from '@ngxpert/input-otp';
+  // Then use it as: <input-otp [pattern]="REGEXP_ONLY_DIGITS">
+  pattern?: InputSignal<string | RegExp | undefined>;
+
+  // While rendering the input slot, you can access both the char and the placeholder, if there's one and it's active.
+  // If you expect input to be of 6 characters, provide 6 characters in the placeholder.
+  placeholder?: InputSignal<string | undefined>;
+
+  // Virtual keyboard appearance on mobile
+  // Default: 'numeric'
+  inputMode?: InputSignal<'numeric' | 'text'>;
+
+  // The autocomplete attribute for the input
+  // Default: 'one-time-code'
+  autoComplete?: InputSignal<string | undefined>;
+
+  // The class name for the container
+  containerClass?: InputSignal<string | undefined>;
+
+  // Emits the complete value when the input is filled
+  complete: OutputEmitterRef<string>;
+}
+```

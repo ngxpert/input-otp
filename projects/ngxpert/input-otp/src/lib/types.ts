@@ -1,3 +1,5 @@
+import { InputSignal, OutputEmitterRef } from '@angular/core';
+
 export interface SlotProps {
   isActive: boolean;
   char: string | null;
@@ -5,18 +7,19 @@ export interface SlotProps {
   hasFakeCaret: boolean;
 }
 
-export interface OTPInputProps {
-  value?: string;
-  maxLength: number;
-  textAlign?: 'left' | 'center' | 'right';
-  pattern?: string | RegExp;
-  placeholder?: string;
-  inputMode?: 'numeric' | 'text';
-  disabled?: boolean;
-  autoComplete?: string;
-  pushPasswordManagerStrategy?: 'increase-width' | 'none';
-  containerClass?: string;
-  noScriptCSSFallback?: string | null;
+export interface InputOTPInputsOutputs {
+  maxLength: InputSignal<number>;
+  // TODO: Add support for textAlign
+  textAlign?: InputSignal<'left' | 'center' | 'right'>;
+  pattern?: InputSignal<string | RegExp | undefined>;
+  placeholder?: InputSignal<string | undefined>;
+  inputMode?: InputSignal<'numeric' | 'text'>;
+  disabled?: InputSignal<boolean>;
+  autoComplete?: InputSignal<string | undefined>;
+  // TODO: Add support for password manager badge
+  pushPasswordManagerStrategy?: InputSignal<'increase-width' | 'none'>;
+  containerClass?: InputSignal<string | undefined>;
+  complete: OutputEmitterRef<string>;
 }
 
 export interface OTPSlot {

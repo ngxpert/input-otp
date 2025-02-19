@@ -26,7 +26,7 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
-import { OTPSlot } from '../../types';
+import { InputOTPInputsOutputs, OTPSlot } from '../../types';
 import { DOCUMENT } from '@angular/common';
 import { getControlValueSignal } from '../../control-value-signal';
 
@@ -67,7 +67,12 @@ const PWM_BADGE_SPACE_WIDTH = `${PWM_BADGE_SPACE_WIDTH_PX}px`;
   },
 })
 export class InputOTPComponent
-  implements AfterViewInit, OnDestroy, ControlValueAccessor, Validator
+  implements
+    AfterViewInit,
+    OnDestroy,
+    ControlValueAccessor,
+    Validator,
+    InputOTPInputsOutputs
 {
   static nextId = 0;
   readonly idNextId = `input-otp-${InputOTPComponent.nextId++}`;
@@ -87,7 +92,6 @@ export class InputOTPComponent
     'increase-width',
   );
   containerClass = input<string>();
-  pasteTransformer = input<(content: string | undefined) => string>();
   complete = output<string>();
 
   mirrorSelectionStart = signal<number | null>(null);
@@ -171,6 +175,15 @@ export class InputOTPComponent
       }
       this.previousValue = newValue;
     });
+
+    effect(() => {
+      const disabled = this.disabled();
+      if (disabled) {
+        this.formControl.disable();
+      } else {
+        this.formControl.enable();
+      }
+    });
   }
 
   writeValue(value: string): void {
@@ -182,7 +195,7 @@ export class InputOTPComponent
   registerOnTouched(fn: () => void): void {
     this.formControl.valueChanges.subscribe(fn);
   }
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
       this.formControl.disable();
     } else {
@@ -250,7 +263,7 @@ export class InputOTPComponent
         : undefined,
       height: '100%',
       display: 'flex',
-      textAlign: this.textAlign(),
+      // textAlign: this.textAlign(),
       opacity: '1',
       color: 'transparent',
       pointerEvents: 'all',

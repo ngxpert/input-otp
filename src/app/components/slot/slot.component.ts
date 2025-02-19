@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { FakeCaretComponent } from '../fake-caret/fake-caret.component';
 import { NgClass } from '@angular/common';
-import { OtpSlotDirective, SlotProps } from '@ngxpert/input-otp';
+import { SlotProps } from '@ngxpert/input-otp';
 
 @Component({
   selector: 'app-slot',
-  imports: [FakeCaretComponent, NgClass, OtpSlotDirective],
+  imports: [FakeCaretComponent, NgClass],
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements SlotProps {
