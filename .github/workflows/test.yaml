@@ -31,8 +31,7 @@ jobs:
       - name: Install dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         env:
-          HUSKY_SKIP_INSTALL: true
-          HUSKY_SKIP_HOOKS: true
+          HUSKY: 0
         run: npm ci
 
       - name: Lint
@@ -51,5 +50,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          HUSKY_SKIP_HOOKS: true
+          HUSKY: 0
         run: npx semantic-release --debug
