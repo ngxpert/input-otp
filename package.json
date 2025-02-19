@@ -20,7 +20,6 @@
     "test:lib:headless": "cross-env CI=true npm run test:lib",
     "copy": "cpx README.md dist/ngxpert/input-otp"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^19.1.0",
     "@angular/cdk": "^19.1.3",
