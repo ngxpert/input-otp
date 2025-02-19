@@ -18,7 +18,7 @@ import { InputOTPComponent } from '@ngxpert/input-otp';
   selector: 'app-my-component',
   template: `
     <input-otp [maxLength]="6" [(ngModel)]="otpValue">
-      <div class="flex">
+      <div style="display: flex;">
         @for (slot of otp.slots(); track $index) {
           <div>{{ slot.char }}</div>
         }
@@ -31,6 +31,12 @@ export class MyComponent {
   otpValue = '';
 }
 ```
+
+## Features
+
+- [x] Works with `Template-Driven Forms` and `Reactive Forms` out of the box.
+- [x] Supports copy-paste-cut
+- [x] Supports all keybindings
 
 ## Default example
 
@@ -183,7 +189,7 @@ There's currently no native OTP/2FA/MFA input in HTML, which means people are ei
 
 This library works by rendering an invisible input as a sibling of the slots, contained by a `relative`ly positioned parent (the container root called _input-otp_).
 
-## Features
+<!-- ## Features
 
 ### This is the most complete OTP input for Angular. It's fully featured
 
@@ -227,7 +233,7 @@ Should be able to support all keybindings of a common text input as it's an inpu
 
 TBA video
 
-</details>
+</details> -->
 
 ## API Reference
 
