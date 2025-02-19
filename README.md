@@ -1,4 +1,7 @@
 # The only accessible & unstyled & full featured Input OTP component for Angular
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ### OTP Input for Angular 🔐 by [@shhdharmen](https://twitter.com/shhdharmen)
 
@@ -272,3 +275,34 @@ export interface InputOTPInputsOutputs {
   complete: OutputEmitterRef<string>;
 }
 ```
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shhdharmen"><img src="https://avatars.githubusercontent.com/u/6831283?v=4?s=100" width="100px;" alt="Dharmen Shah"/><br /><sub><b>Dharmen Shah</b></sub></a><br /><a href="#a11y-shhdharmen" title="Accessibility">️️️️♿️</a> <a href="#question-shhdharmen" title="Answering Questions">💬</a> <a href="https://github.com/ngxpert/input-otp/issues?q=author%3Ashhdharmen" title="Bug reports">🐛</a> <a href="https://github.com/ngxpert/input-otp/commits?author=shhdharmen" title="Code">💻</a> <a href="#content-shhdharmen" title="Content">🖋</a> <a href="https://github.com/ngxpert/input-otp/commits?author=shhdharmen" title="Documentation">📖</a> <a href="#example-shhdharmen" title="Examples">💡</a> <a href="#maintenance-shhdharmen" title="Maintenance">🚧</a> <a href="#projectManagement-shhdharmen" title="Project Management">📆</a> <a href="https://github.com/ngxpert/input-otp/pulls?q=is%3Apr+reviewed-by%3Ashhdharmen" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/ngxpert/input-otp/commits?author=shhdharmen" title="Tests">⚠️</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
