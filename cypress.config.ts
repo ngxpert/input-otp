@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  projectId: 'w78mnp',
   component: {
     devServer: {
       framework: 'angular',
