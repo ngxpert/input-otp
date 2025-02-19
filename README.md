@@ -20,9 +20,9 @@ import { InputOTPComponent } from '@ngxpert/input-otp';
 @Component({
   selector: 'app-my-component',
   template: `
-    <input-otp [maxLength]="6" [(ngModel)]="otpValue">
+    <input-otp [maxLength]="6" [(ngModel)]="otpValue" #otpInput>
       <div style="display: flex;">
-        @for (slot of otp.slots(); track $index) {
+        @for (slot of otpInput.slots(); track $index) {
           <div>{{ slot.char }}</div>
         }
       </div>
@@ -43,11 +43,11 @@ export class MyComponent {
 
 ## Default example
 
-The example below uses `tailwindcss` `tailwind-merge` `clsx`:
+The example below uses `tailwindcss` `tailwind-merge` `clsx`. You can see it online [here](https://ngxpert.github.io/input-otp/examples), code available [here](https://github.com/ngxpert/input-otp/tree/main/src/app/pages/examples/main).
 
 ### main.component
 
-```tsx
+```ts
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputOTPComponent } from '@ngxpert/input-otp';
@@ -64,23 +64,37 @@ import { FakeDashComponent } from './fake-components';
       #otp="inputOtp"
     >
       <div class="flex">
-        @for (slot of otp.slots().slice(0, 3); track $index) {
+        @for (
+          slot of otp.slots().slice(0, 3);
+          track $index;
+          let first = $first;
+          let last = $last
+        ) {
           <app-slot
             [isActive]="slot.isActive"
             [char]="slot.char"
             [placeholderChar]="slot.placeholderChar"
             [hasFakeCaret]="slot.hasFakeCaret"
+            [first]="first"
+            [last]="last"
           />
         }
       </div>
       <app-fake-dash />
       <div class="flex">
-        @for (slot of otp.slots().slice(3, 6); track $index + 3) {
+        @for (
+          slot of otp.slots().slice(3, 6);
+          track $index + 3;
+          let last = $last;
+          let first = $first
+        ) {
           <app-slot
             [isActive]="slot.isActive"
             [char]="slot.char"
             [placeholderChar]="slot.placeholderChar"
             [hasFakeCaret]="slot.hasFakeCaret"
+            [first]="first"
+            [last]="last"
           />
         }
       </div>
@@ -110,10 +124,12 @@ import { cn } from './utils';
           'relative w-10 h-14 text-[2rem]',
           'flex items-center justify-center',
           'transition-all duration-300',
-          'border-border border-y border-r first:border-l first:rounded-l-md last:rounded-r-md',
+          'border-y border-r',
           'group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20',
           'outline outline-0 outline-accent-foreground/20',
-          { 'outline-4 outline-accent-foreground': isActive }
+          { 'outline-4 outline-accent-foreground': isActive },
+          { 'border-l rounded-l-md': first },
+          { 'rounded-r-md': last }
         )
       "
     >
@@ -134,6 +150,8 @@ export class SlotComponent {
   @Input() char: string | null = null;
   @Input() placeholderChar: string | null = null;
   @Input() hasFakeCaret = false;
+  @Input() first = false;
+  @Input() last = false;
   cn = cn;
 }
 
@@ -148,7 +166,7 @@ import { Component } from '@angular/core';
   selector: 'app-fake-dash',
   template: `
     <div class="flex w-10 justify-center items-center">
-      <div class="w-3 h-1 rounded-full bg-border"></div>
+      <div class="w-3 h-1 rounded-full bg-black/75"></div>
     </div>
   `,
 })
@@ -160,7 +178,7 @@ export class FakeDashComponent {}
     <div
       class="absolute pointer-events-none inset-0 flex items-center justify-center animate-caret-blink"
     >
-      <div class="w-px h-8 bg-white"></div>
+      <div class="w-[2px] h-8 bg-black/75"></div>
     </div>
   `,
 })
@@ -171,7 +189,6 @@ export class FakeCaretComponent {}
 ### utils
 
 ```ts
-// Small utility to merge class names.
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -181,6 +198,27 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+```
+
+### styles
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --animate-caret-blink: caret-blink 1.2s ease-out infinite;
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+}
 ```
 
 ## How it works

@@ -14,23 +14,37 @@ import { FakeDashComponent } from './fake-components';
       #otp="inputOtp"
     >
       <div class="flex">
-        @for (slot of otp.slots().slice(0, 3); track $index) {
+        @for (
+          slot of otp.slots().slice(0, 3);
+          track $index;
+          let first = $first;
+          let last = $last
+        ) {
           <app-slot
             [isActive]="slot.isActive"
             [char]="slot.char"
             [placeholderChar]="slot.placeholderChar"
             [hasFakeCaret]="slot.hasFakeCaret"
+            [first]="first"
+            [last]="last"
           />
         }
       </div>
       <app-fake-dash />
       <div class="flex">
-        @for (slot of otp.slots().slice(3, 6); track $index + 3) {
+        @for (
+          slot of otp.slots().slice(3, 6);
+          track $index + 3;
+          let last = $last;
+          let first = $first
+        ) {
           <app-slot
             [isActive]="slot.isActive"
             [char]="slot.char"
             [placeholderChar]="slot.placeholderChar"
             [hasFakeCaret]="slot.hasFakeCaret"
+            [first]="first"
+            [last]="last"
           />
         }
       </div>

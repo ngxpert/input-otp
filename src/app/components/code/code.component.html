@@ -9,11 +9,16 @@
     @for (file of files; track file.fileName) {
       <mat-tab [label]="file.fileName">
         <ng-template mat-tab-label>{{ file.fileName }}</ng-template>
-        <div
-          [innerHTML]="
-            file.content | codeHighlight: file.language | async | safeHtml
-          "
-        ></div>
+        <div class="relative">
+          <span class="absolute top-2 right-2">
+            <app-copy-button [textToCopy]="file.content" />
+          </span>
+          <div
+            [innerHTML]="
+              file.content | codeHighlight: file.language | async | safeHtml
+            "
+          ></div>
+        </div>
       </mat-tab>
     }
   </mat-tab-group>

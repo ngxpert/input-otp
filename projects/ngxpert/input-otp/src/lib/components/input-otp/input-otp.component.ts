@@ -217,7 +217,6 @@ export class InputOTPComponent
 
   private valueOrFocusedChanged() {
     // Forcefully remove :autofill state
-    console.log('valueOrFocusedChanged');
     this.inputRef()?.nativeElement?.dispatchEvent(new Event('input'));
 
     // Update the selection state
@@ -443,7 +442,6 @@ export class InputOTPComponent
   }
 
   private changeFocus(value: boolean) {
-    console.log('changeFocus', value);
     this.isFocused.set(value);
     this.valueOrFocusedChanged();
   }

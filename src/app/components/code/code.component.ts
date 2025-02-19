@@ -11,11 +11,17 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AsyncPipe } from '@angular/common';
 import { CodeHighlightPipe } from '../../shared/pipes/code-highlight.pipe';
 import { SafeHtmlPipe } from '../../shared/pipes/safe-html.pipe';
-
+import { CopyButtonComponent } from '../copy-button/copy-button.component';
 @Component({
   selector: 'app-code',
   templateUrl: './code.component.html',
-  imports: [MatTabsModule, AsyncPipe, CodeHighlightPipe, SafeHtmlPipe],
+  imports: [
+    MatTabsModule,
+    AsyncPipe,
+    CodeHighlightPipe,
+    SafeHtmlPipe,
+    CopyButtonComponent,
+  ],
 })
 export class CodeComponent {
   readonly files: { fileName: string; content: string; language: string }[] = [
@@ -42,6 +48,27 @@ ${fakeComponentsContent}`,
       content: `
 ${utilsContent}`,
       language: 'ts',
+    },
+    {
+      fileName: 'styles.css',
+      content: `
+@import "tailwindcss";
+
+@theme {
+  --animate-caret-blink: caret-blink 1.2s ease-out infinite;
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+}`,
+      language: 'css',
     },
   ];
 }

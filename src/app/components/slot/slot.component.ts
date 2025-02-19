@@ -13,6 +13,8 @@ export class SlotComponent implements SlotProps {
   @Input() char: string | null = null;
   @Input() placeholderChar: string | null = null;
   @Input() hasFakeCaret = false;
+  @Input() first = false;
+  @Input() last = false;
   private _animateIdx: number | undefined;
   willAnimateChar = false;
   willAnimateCaret = false;

@@ -11,10 +11,12 @@ import { cn } from './utils';
           'relative w-10 h-14 text-[2rem]',
           'flex items-center justify-center',
           'transition-all duration-300',
-          'border-border border-y border-r first:border-l first:rounded-l-md last:rounded-r-md',
+          'border-y border-r',
           'group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20',
           'outline outline-0 outline-accent-foreground/20',
-          { 'outline-4 outline-accent-foreground': isActive }
+          { 'outline-4 outline-accent-foreground': isActive },
+          { 'border-l rounded-l-md': first },
+          { 'rounded-r-md': last }
         )
       "
     >
@@ -35,5 +37,7 @@ export class SlotComponent {
   @Input() char: string | null = null;
   @Input() placeholderChar: string | null = null;
   @Input() hasFakeCaret = false;
+  @Input() first = false;
+  @Input() last = false;
   cn = cn;
 }

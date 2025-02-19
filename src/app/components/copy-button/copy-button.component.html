@@ -1,0 +1,16 @@
+<button
+  appUiButton
+  size="icon"
+  variant="ghost"
+  [cdkCopyToClipboard]="textToCopy"
+  (cdkCopyToClipboardCopied)="copied()"
+>
+  @if (isCopied) {
+    <span class="text-muted-foreground material-symbols-outlined"> check </span>
+  } @else {
+    <span class="text-muted-foreground material-symbols-outlined">
+      content_copy
+    </span>
+  }
+  <span class="sr-only">Copy</span>
+</button>
