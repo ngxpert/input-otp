@@ -25,6 +25,9 @@ jobs:
       - name: Build app
         run: npm run build -- --base-href "/input-otp/"
 
+      - name: Test app
+        run: npm run test
+
       - name: Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
