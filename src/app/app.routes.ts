@@ -5,6 +5,7 @@ import { TestBaseComponent } from './pages/tests/base/base.component';
 import { TestInputsComponent } from './pages/tests/inputs/inputs.component';
 import { TestWithFocusAfterInitComponent } from './pages/tests/with-focus-afterinit/with-focus-afterinit.component';
 import { TestWithOnCompleteComponent } from './pages/tests/with-on-complete/with-on-complete.component';
+import { CopyPasteComponent } from './pages/tests/copy-paste/copy-paste.component';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,10 @@ export const routes: Routes = [
       {
         path: 'with-on-complete',
         component: TestWithOnCompleteComponent,
+      },
+      {
+        path: 'copy-paste',
+        component: CopyPasteComponent,
       },
     ],
   },
