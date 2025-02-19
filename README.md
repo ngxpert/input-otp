@@ -37,9 +37,9 @@ export class MyComponent {
 
 ## Features
 
-- [x] Works with `Template-Driven Forms` and `Reactive Forms` out of the box.
-- [x] Supports copy-paste-cut
-- [x] Supports all keybindings
+- ✅ Works with `Template-Driven Forms` and `Reactive Forms` out of the box.
+- ✅ Supports copy-paste-cut
+- ✅ Supports all keybindings
 
 ## Default example
 
