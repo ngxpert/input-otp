@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/ngxpert/input-otp/compare/v1.0.2...v1.0.3) (2025-02-19)
+
+
+### Bug Fixes
+
+* remove consoles, docs, fix examples ([54b8377](https://github.com/ngxpert/input-otp/commit/54b83772d77192a08f0cc8862e0bb63db30e973d))
+
 ## [1.0.2](https://github.com/ngxpert/input-otp/compare/v1.0.1...v1.0.2) (2025-02-19)
 
 
