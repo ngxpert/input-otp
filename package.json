@@ -76,7 +76,7 @@
     "shiki": "^2.3.2",
     "start-server-and-test": "^2.0.10",
     "typescript": "~5.7.2",
-    "typescript-eslint": "8.26.1"
+    "typescript-eslint": "8.42.0"
   },
   "config": {
     "commitizen": {
