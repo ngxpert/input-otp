@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ButtonDirective } from '../ui/button/button.component';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 @Component({
@@ -7,7 +7,7 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
   imports: [ButtonDirective, CdkCopyToClipboard],
 })
 export class CopyButtonComponent {
-  @Input() textToCopy = '';
+  readonly textToCopy = input('');
   isCopied = false;
 
   copied() {

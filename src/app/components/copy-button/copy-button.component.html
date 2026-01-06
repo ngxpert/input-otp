@@ -2,7 +2,7 @@
   appUiButton
   size="icon"
   variant="ghost"
-  [cdkCopyToClipboard]="textToCopy"
+  [cdkCopyToClipboard]="textToCopy()"
   (cdkCopyToClipboardCopied)="copied()"
 >
   @if (isCopied) {
