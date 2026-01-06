@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal, effect, DOCUMENT } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
 
 const LOCAL_STORAGE_THEME_KEY = 'input-otp-theme';

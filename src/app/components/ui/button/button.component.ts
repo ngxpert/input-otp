@@ -1,4 +1,4 @@
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, input } from '@angular/core';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 export const buttonVariants = cva(
@@ -35,10 +35,10 @@ type ButtonProps = VariantProps<typeof buttonVariants>;
   selector: 'button[appUiButton], a[appUiButton]',
 })
 export class ButtonDirective {
-  @Input() variant: ButtonProps['variant'] = 'default';
-  @Input() size: ButtonProps['size'] = 'default';
+  readonly variant = input<ButtonProps['variant']>('default');
+  readonly size = input<ButtonProps['size']>('default');
 
   @HostBinding('class') get class() {
-    return buttonVariants({ variant: this.variant, size: this.size });
+    return buttonVariants({ variant: this.variant(), size: this.size() });
   }
 }

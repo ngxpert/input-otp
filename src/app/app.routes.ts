@@ -1,11 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { ExamplesMainComponent } from './pages/examples/main/main.component';
-import { TestBaseComponent } from './pages/tests/base/base.component';
-import { TestInputsComponent } from './pages/tests/inputs/inputs.component';
-import { TestWithFocusAfterInitComponent } from './pages/tests/with-focus-afterinit/with-focus-afterinit.component';
-import { TestWithOnCompleteComponent } from './pages/tests/with-on-complete/with-on-complete.component';
-import { CopyPasteComponent } from './pages/tests/copy-paste/copy-paste.component';
 
 export const routes: Routes = [
   {
@@ -15,34 +8,53 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    loadComponent: () =>
+      import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'examples',
-    component: ExamplesMainComponent,
+    loadComponent: () =>
+      import('./pages/examples/main/main.component').then(
+        (m) => m.ExamplesMainComponent,
+      ),
   },
   {
     path: 'tests',
     children: [
       {
         path: 'base',
-        component: TestBaseComponent,
+        loadComponent: () =>
+          import('./pages/tests/base/base.component').then(
+            (m) => m.TestBaseComponent,
+          ),
       },
       {
         path: 'inputs',
-        component: TestInputsComponent,
+        loadComponent: () =>
+          import('./pages/tests/inputs/inputs.component').then(
+            (m) => m.TestInputsComponent,
+          ),
       },
       {
         path: 'with-focus-afterinit',
-        component: TestWithFocusAfterInitComponent,
+        loadComponent: () =>
+          import(
+            './pages/tests/with-focus-afterinit/with-focus-afterinit.component'
+          ).then((m) => m.TestWithFocusAfterInitComponent),
       },
       {
         path: 'with-on-complete',
-        component: TestWithOnCompleteComponent,
+        loadComponent: () =>
+          import(
+            './pages/tests/with-on-complete/with-on-complete.component'
+          ).then((m) => m.TestWithOnCompleteComponent),
       },
       {
         path: 'copy-paste',
-        component: CopyPasteComponent,
+        loadComponent: () =>
+          import('./pages/tests/copy-paste/copy-paste.component').then(
+            (m) => m.CopyPasteComponent,
+          ),
       },
     ],
   },

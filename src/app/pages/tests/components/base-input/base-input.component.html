@@ -1,22 +1,22 @@
 <input-otp
   [(ngModel)]="value"
-  [disabled]="disabled"
+  [disabled]="disabled()"
   [containerClass]="
-    cn('group flex items-center', containerClass, {
-      'opacity-50': disabled,
+    cn('group flex items-center', containerClass(), {
+      'opacity-50': disabled(),
     })
   "
-  [maxLength]="maxLength"
-  [inputMode]="inputMode"
-  [pattern]="pattern ?? ''"
-  [placeholder]="placeholder"
-  [id]="id"
-  [name]="name ?? ''"
+  [maxLength]="maxLength()"
+  [inputMode]="inputMode()"
+  [pattern]="pattern() ?? ''"
+  [placeholder]="placeholder()"
+  [id]="id()"
+  [name]="name() ?? ''"
   #otpInput="inputOtp"
   (complete)="complete.emit($event)"
 >
   <div
-    [class]="cn('flex items-center gap-1', { 'opacity-50': disabled })"
+    [class]="cn('flex items-center gap-1', { 'opacity-50': disabled() })"
     data-testid="input-otp-renderer"
     [attr.data-test-render-is-hovering]="
       otpInput.isHovering() ? 'true' : undefined

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 import { FakeCaretComponent } from './fake-components';
 import { cn } from './utils';
 
@@ -14,9 +14,9 @@ import { cn } from './utils';
           'border-y border-r',
           'group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20',
           'outline outline-0 outline-accent-foreground/20',
-          { 'outline-4 outline-accent-foreground': isActive },
-          { 'border-l rounded-l-md': first },
-          { 'rounded-r-md': last }
+          { 'outline-4 outline-accent-foreground': isActive() },
+          { 'border-l rounded-l-md': first() },
+          { 'rounded-r-md': last() }
         )
       "
     >
@@ -25,7 +25,7 @@ import { cn } from './utils';
       } @else {
         {{ ' ' }}
       }
-      @if (hasFakeCaret) {
+      @if (hasFakeCaret()) {
         <app-fake-caret />
       }
     </div>
@@ -33,11 +33,11 @@ import { cn } from './utils';
   imports: [FakeCaretComponent],
 })
 export class SlotComponent {
-  @Input() isActive = false;
+  readonly isActive = input(false);
   @Input() char: string | null = null;
-  @Input() placeholderChar: string | null = null;
-  @Input() hasFakeCaret = false;
-  @Input() first = false;
-  @Input() last = false;
+  readonly placeholderChar = input<string | null>(null);
+  readonly hasFakeCaret = input(false);
+  readonly first = input(false);
+  readonly last = input(false);
   cn = cn;
 }

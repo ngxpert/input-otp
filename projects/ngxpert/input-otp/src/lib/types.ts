@@ -1,10 +1,10 @@
 import { InputSignal, OutputEmitterRef } from '@angular/core';
 
 export interface SlotProps {
-  isActive: boolean;
+  isActive: InputSignal<boolean>;
   char: string | null;
-  placeholderChar: string | null;
-  hasFakeCaret: boolean;
+  placeholderChar: InputSignal<string | null>;
+  hasFakeCaret: InputSignal<boolean>;
 }
 
 export interface InputOTPInputsOutputs {

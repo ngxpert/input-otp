@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 import { FakeCaretComponent } from '../fake-caret/fake-caret.component';
 import { NgClass } from '@angular/common';
 import { SlotProps } from '@ngxpert/input-otp';
@@ -9,12 +9,12 @@ import { SlotProps } from '@ngxpert/input-otp';
   templateUrl: './slot.component.html',
 })
 export class SlotComponent implements SlotProps {
-  @Input() isActive = false;
+  readonly isActive = input(false);
   @Input() char: string | null = null;
-  @Input() placeholderChar: string | null = null;
-  @Input() hasFakeCaret = false;
-  @Input() first = false;
-  @Input() last = false;
+  readonly placeholderChar = input<string | null>(null);
+  readonly hasFakeCaret = input(false);
+  readonly first = input(false);
+  readonly last = input(false);
   private _animateIdx: number | undefined;
   willAnimateChar = false;
   willAnimateCaret = false;
