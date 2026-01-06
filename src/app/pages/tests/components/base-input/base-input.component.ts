@@ -1,12 +1,11 @@
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
-  Output,
   booleanAttribute,
   numberAttribute,
   viewChild,
   input,
+  output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputOTPComponent } from '@ngxpert/input-otp';
@@ -30,7 +29,7 @@ export class TestBaseInputComponent implements AfterViewInit {
   readonly id = input<string>();
   readonly name = input<string>();
   readonly focusAfterInit = input(false, { transform: booleanAttribute });
-  @Output() complete = new EventEmitter<string>();
+  readonly complete = output<string>();
 
   otpInput = viewChild<InputOTPComponent>('otpInput');
 
