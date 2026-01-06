@@ -14,6 +14,7 @@ import {
   Renderer2,
   signal,
   viewChild,
+  DOCUMENT
 } from '@angular/core';
 import {
   AbstractControl,
@@ -27,7 +28,7 @@ import {
   Validator,
 } from '@angular/forms';
 import { InputOTPInputsOutputs, OTPSlot } from '../../types';
-import { DOCUMENT } from '@angular/common';
+
 import { getControlValueSignal } from '../../control-value-signal';
 
 // TODO: Fix password manager badge tracking
