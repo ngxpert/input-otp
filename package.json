@@ -52,14 +52,14 @@
     "@types/jasmine": "~5.1.0",
     "all-contributors-cli": "^6.26.1",
     "angular-cli-ghpages": "^2.0.3",
-    "angular-eslint": "19.0.2",
+    "angular-eslint": "20.7.0",
     "clipboardy": "^4.0.0",
     "copyfiles": "^2.4.1",
     "cpx": "^1.5.0",
     "cross-env": "^7.0.3",
     "cypress": "15.8.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9.16.0",
+    "eslint": "^9.28.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
@@ -75,7 +75,7 @@
     "shiki": "^2.3.2",
     "start-server-and-test": "^2.0.10",
     "typescript": "~5.7.2",
-    "typescript-eslint": "8.26.1"
+    "typescript-eslint": "^8.33.1"
   },
   "config": {
     "commitizen": {
