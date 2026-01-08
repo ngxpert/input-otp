@@ -52,7 +52,7 @@
     "@types/jasmine": "~5.1.0",
     "all-contributors-cli": "^6.26.1",
     "angular-cli-ghpages": "^2.0.3",
-    "angular-eslint": "20.7.0",
+    "angular-eslint": "21.1.0",
     "clipboardy": "^4.0.0",
     "copyfiles": "^2.4.1",
     "cpx": "^1.5.0",
