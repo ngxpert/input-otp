@@ -14,7 +14,7 @@ import {
   Renderer2,
   signal,
   viewChild,
-  DOCUMENT
+  DOCUMENT,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -63,9 +63,6 @@ const PWM_BADGE_SPACE_WIDTH = `${PWM_BADGE_SPACE_WIDTH_PX}px`;
       multi: true,
     },
   ],
-  host: {
-    '[id]': 'id',
-  },
 })
 export class InputOTPComponent
   implements
