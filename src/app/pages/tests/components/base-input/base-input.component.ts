@@ -1,12 +1,11 @@
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
-  Input,
-  Output,
   booleanAttribute,
   numberAttribute,
   viewChild,
+  input,
+  output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputOTPComponent } from '@ngxpert/input-otp';
@@ -21,21 +20,21 @@ export class TestBaseInputComponent implements AfterViewInit {
   value = '';
   cn = cn;
 
-  @Input({ transform: booleanAttribute }) disabled = false;
-  @Input() inputMode: 'numeric' | 'text' = 'numeric';
-  @Input({ transform: numberAttribute }) maxLength = 6;
-  @Input() pattern?: string | RegExp;
-  @Input() placeholder?: string;
-  @Input() containerClass?: string;
-  @Input() id?: string;
-  @Input() name?: string;
-  @Input({ transform: booleanAttribute }) focusAfterInit = false;
-  @Output() complete = new EventEmitter<string>();
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly inputMode = input<'numeric' | 'text'>('numeric');
+  readonly maxLength = input(6, { transform: numberAttribute });
+  readonly pattern = input<string | RegExp>();
+  readonly placeholder = input<string>();
+  readonly containerClass = input<string>();
+  readonly id = input<string>();
+  readonly name = input<string>();
+  readonly focusAfterInit = input(false, { transform: booleanAttribute });
+  readonly complete = output<string>();
 
   otpInput = viewChild<InputOTPComponent>('otpInput');
 
   ngAfterViewInit() {
-    if (this.focusAfterInit) {
+    if (this.focusAfterInit()) {
       this.otpInput()?.inputRef()?.nativeElement.focus();
     }
   }

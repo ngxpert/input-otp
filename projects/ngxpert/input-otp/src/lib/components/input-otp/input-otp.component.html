@@ -4,7 +4,7 @@
   data-input-otp-container
   [style]="rootStyle()"
 >
-  <ng-content></ng-content>
+  <ng-content />
   <div
     [style]="{
       position: 'absolute',
@@ -17,7 +17,9 @@
       data-input-otp
       [id]="id() ?? idNextId"
       [name]="name() ?? ''"
-      [attr.data-input-otp-placeholder-shown]="formControl.value?.length === 0 || undefined"
+      [attr.data-input-otp-placeholder-shown]="
+        formControl.value?.length === 0 || undefined
+      "
       [attr.data-input-otp-mss]="mirrorSelectionStart() || undefined"
       [attr.data-input-otp-mse]="mirrorSelectionEnd() || undefined"
       [inputMode]="inputMode()"

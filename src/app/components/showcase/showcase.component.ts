@@ -1,10 +1,10 @@
 import {
   AfterViewInit,
   Component,
-  Input,
   OnDestroy,
   signal,
   viewChild,
+  input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputOTPComponent, REGEXP_ONLY_DIGITS } from '@ngxpert/input-otp';
@@ -20,7 +20,7 @@ export class ShowcaseComponent implements AfterViewInit, OnDestroy {
   otpValue = '12';
   REGEXP_ONLY_DIGITS = REGEXP_ONLY_DIGITS;
   cn = cn;
-  @Input() className = '';
+  readonly className = input('');
 
   otp = viewChild<InputOTPComponent>(InputOTPComponent);
   disabled = signal(false);

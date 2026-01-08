@@ -1,8 +1,8 @@
-import { Directive, Input } from '@angular/core';
+import { Directive, input } from '@angular/core';
 
 @Directive({
   selector: '[appComponentWClass]',
 })
 export class ComponentWClassDirective {
-  @Input() class = '';
+  readonly class = input('');
 }

@@ -1,5 +1,7 @@
 <form
-  [class]="cn('mx-auto flex max-w-[980px] justify-center pt-6 pb-4', className)"
+  [class]="
+    cn('mx-auto flex max-w-[980px] justify-center pt-6 pb-4', className())
+  "
   (ngSubmit)="onSubmit()"
 >
   <input-otp

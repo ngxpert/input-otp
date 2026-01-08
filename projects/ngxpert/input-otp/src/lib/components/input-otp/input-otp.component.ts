@@ -14,6 +14,7 @@ import {
   Renderer2,
   signal,
   viewChild,
+  DOCUMENT,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -27,7 +28,7 @@ import {
   Validator,
 } from '@angular/forms';
 import { InputOTPInputsOutputs, OTPSlot } from '../../types';
-import { DOCUMENT } from '@angular/common';
+
 import { getControlValueSignal } from '../../control-value-signal';
 
 // TODO: Fix password manager badge tracking
@@ -62,9 +63,6 @@ const PWM_BADGE_SPACE_WIDTH = `${PWM_BADGE_SPACE_WIDTH_PX}px`;
       multi: true,
     },
   ],
-  host: {
-    '[id]': 'id',
-  },
 })
 export class InputOTPComponent
   implements
