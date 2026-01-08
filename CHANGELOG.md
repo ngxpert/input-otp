@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/ngxpert/input-otp/compare/v1.0.3...v2.0.0) (2026-01-08)
+
+
+### Bug Fixes
+
+* remove unwanted id from host ([26f2f5b](https://github.com/ngxpert/input-otp/commit/26f2f5bae2f04547b43acdae9688a1e3643c21c0))
+
+
+### Features
+
+* update to angular version 20 ([dd325ec](https://github.com/ngxpert/input-otp/commit/dd325ec61ca78df8aad62641c96ba82e0cfdb461))
+* upgrade @angular/cdk and @angular/material to version 20.2.14 ([129abdc](https://github.com/ngxpert/input-otp/commit/129abdcd908821124c9ec73f053ed7b43d0295cc))
+
+
+### BREAKING CHANGES
+
+* update to angular version 20
+
 # [2.0.0-beta.2](https://github.com/ngxpert/input-otp/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-01-08)
 
 
