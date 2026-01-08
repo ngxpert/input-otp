@@ -1,3 +1,10 @@
+# [2.0.0-beta.2](https://github.com/ngxpert/input-otp/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-01-08)
+
+
+### Bug Fixes
+
+* remove unwanted id from host ([26f2f5b](https://github.com/ngxpert/input-otp/commit/26f2f5bae2f04547b43acdae9688a1e3643c21c0))
+
 # [2.0.0-beta.1](https://github.com/ngxpert/input-otp/compare/v1.0.3...v2.0.0-beta.1) (2026-01-06)
 
 
