@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/ngxpert/input-otp/compare/v2.0.0...v3.0.0) (2026-01-08)
+
+
+### Features
+
+* add support for angular version 21 ([f5ff294](https://github.com/ngxpert/input-otp/commit/f5ff294a3df73b69a69a75a7884eed695a22ed77))
+
+
+### BREAKING CHANGES
+
+* add support for angular version 21
+
 # [2.0.0](https://github.com/ngxpert/input-otp/compare/v1.0.3...v2.0.0) (2026-01-08)
 
 
